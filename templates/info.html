@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>향기 사용 방법</title>
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang&display=swap" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    body {
+      font-family: 'Gowun Batang', serif;
+      background-color: #fffdf7;
+      margin: 0;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .home-button {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    }
+
+    .home-button a {
+    background-color: #9c7d47;
+    color: white;
+    padding: 8px 18px;
+    text-decoration: none;
+    border-radius: 8px;
+    font-family: 'Gowun Batang', serif;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    transition: background-color 0.2s ease;
+    }
+
+    .home-button a:hover {
+    background-color: #7a6135;
+    }
+
+    .info-container {
+      max-width: 400px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+
+    .info-box {
+      padding: 20px;
+      border-radius: 16px;
+      font-size: 1.3em;
+      font-weight: bold;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      border: 2px solid transparent;
+      cursor: pointer;
+      position: relative;
+      transition: background-color 0.3s ease;
+    }
+
+    .box1 {
+      background-color: #FFF6DC;
+      border-color: #F8E0A3;
+    }
+
+    .box2 {
+      background-color: #EAFAD1;
+      border-color: #C9E4A3;
+    }
+
+    .box3 {
+      background-color: #FCE8B8;
+      border-color: #E6D3A3;
+    }
+
+    .detail {
+      display: none;
+      margin-top: 12px;
+      font-size: 0.9em;
+      background-color: #ffffffb3;
+      padding: 12px;
+      border-radius: 12px;
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="home-button">
+  <a href="{{ url_for('home') }}"><i class="fas fa-home"></i></a>
+</div>
+
+  <h1>향기 사용 방법</h1>
+  <h3>원하는 사용 방법을 클릭하세요</h3>
+
+
+  <div class="info-container">
+    
+    <div class="info-box box1" onclick="toggleDetail(this)">
+      롤온 퍼퓸 제작
+      <div class="detail">호호바오일과 에센셜오일을 10ml 롤온 용기에 혼합해 간편하게 사용할 수 있습니다.</div>
+    </div>
+
+    <div class="info-box box2" onclick="toggleDetail(this)">
+      목걸이 사용
+      <div class="detail">방향 목걸이에 오일을 한두 방울 떨어뜨려 하루 종일 향을 은은하게 유지하세요.</div>
+    </div>
+
+    <div class="info-box box3" onclick="toggleDetail(this)">
+      손수건 사용
+      <div class="detail">손수건에 오일을 떨어뜨려 가방이나 침대 옆에 두면 편안함을 느낄 수 있습니다.</div>
+    </div>
+
+  </div>
+
+  <script>
+    function toggleDetail(box) {
+      $(box).find('.detail').slideToggle(250);
+    }
+  </script>
+
+</body>
+</html>

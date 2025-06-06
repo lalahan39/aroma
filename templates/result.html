@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>추천 결과</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Gowun Batang', serif;
+      background-color: #fffdf7;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .recommend-box {
+      border: 2px solid black;
+      width: 400px;
+      margin: 0 auto;
+      border-radius: 15px;
+      background-color: white;
+      padding: 30px;
+      box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .oil-button {
+      background-color: #EAE1C5;
+      border: none;
+      padding: 15px 30px;
+      margin: 10px 0;
+      font-size: 1.2em;
+      font-weight: bold;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .oil-button:hover {
+      background-color: #c0b9a1;
+    }
+
+    .description {
+      margin-top: 20px;
+      text-align: left;
+      background-color: #F5ECD9;
+      padding: 15px;
+      border-radius: 10px;
+      font-size: 0.95em;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .back-button {
+      display: inline-block;
+      margin-top: 40px;
+      padding: 10px 25px;
+      background-color: #9c7d47;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Gowun Batang', serif;
+      font-size: 1em;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .back-button:hover {
+      background-color: #7a6135;
+    }
+
+    .oil-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="recommend-box">
+    <h2>당신에게 추천하는 향은</h2>
+
+    <!-- 항상 보이는 추천 향 정보 -->
+    <div class="description">
+      <p><strong>오일 이름:</strong> </p>
+      <p><strong>제조법:</strong> </p>
+      <p><strong>향 특징:</strong> </p>
+    </div>
+
+    <hr style="margin: 30px 0;">
+
+    <h3>다른 향을 찾고 있다면...</h3>
+    <h4>세부 정보를 확인하기 위해 오일 이름을 클릭하세요</h4>
+
+    <!-- 예시: 다른 오일들 -->
+    <div class="oil-item">
+    <button class="oil-button" onclick="toggleDesc('alt1')">페퍼민트 오일</button>
+    <div id="alt1" class="description hidden">
+      <p><strong>제조법:</strong> 페퍼민트 1방울 + 호호바</p>
+      <p><strong>향 특징:</strong> 청량하고 시원한 향</p>
+    </div>
+    </div>
+
+    <div class="oil-item">
+    <button class="oil-button" onclick="toggleDesc('alt2')">일랑일랑 오일</button>
+    <div id="alt2" class="description hidden">
+      <p><strong>제조법:</strong> 일랑일랑 2방울</p>
+      <p><strong>향 특징:</strong> 달콤하고 이국적인 향</p>
+    </div>
+  </div>
+  </div>
+
+
+  <!-- 돌아가기 버튼 -->
+  <a class="back-button" href="{{ url_for('home') }}"><i class="fas fa-arrow-left"></i> 돌아가기</a>
+
+  <script>
+    function toggleDesc(id) {
+      const el = document.getElementById(id);
+      el.classList.toggle("hidden");
+    }
+  </script>
+</body>
+</html>
