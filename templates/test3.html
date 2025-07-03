@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>내게 맞는 향 찾기</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang&family=Nanum+Brush+Script&family=Noto+Serif+KR&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+
+  <style>
+    body {
+      font-family: 'Gowun Batang', serif;
+      background-color: #ffffff;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .home-button {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    }
+
+    .home-button a {
+    background-color: #9c7d47;
+    color: white;
+    padding: 8px 18px;
+    text-decoration: none;
+    border-radius: 8px;
+    font-family: 'Gowun Batang', serif;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    transition: background-color 0.2s ease;
+    }
+
+    .home-button a:hover {
+    background-color: #7a6135;
+    }
+
+
+    .question-box {
+      margin-top: 30px;
+      padding: 20px;
+      border: 2px solid black;
+      width: 90%;
+      border-radius: 12px;
+      box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .question-title {
+      font-size: 1.3em;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .question-text {
+      font-size: 1.5em;
+      font-weight: bold;
+      margin-bottom: 25px;
+    }
+
+    .rating label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 1em;
+    margin: 0 6px;
+    }
+
+    .scale-number {
+    font-size: 1.3em;
+    font-weight: bold;
+    margin-top: 5px;
+    }
+
+    .scale-text {
+    font-size: 0.75em;
+    color: #666;
+    text-align: center;
+    line-height: 1.2;
+    margin-top: 2px;
+    }
+
+
+    input[type="radio"] {
+      width: 20px;
+      height: 20px;
+      margin-bottom: 5px;
+    }
+
+    .rating {
+    display: flex;
+    justify-content: center;
+    gap: 12px; 
+    }
+
+    .nav-buttons {
+    margin-top: 30px;
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    }
+
+    .nav-buttons button {
+    background-color: #9c7d47;
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    font-size: 1em;
+    border-radius: 10px;
+    font-family: 'Gowun Batang', serif;
+    cursor: pointer;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+    transition: background-color 0.2s ease;
+    }
+
+    .nav-buttons button:hover {
+    background-color: #7a6135;
+    }
+
+
+  </style>
+</head>
+<body>
+
+<div class="home-button">
+  <a href="{{ url_for('home') }}"><i class="fas fa-home"></i></a>
+</div>
+
+<div id="question-container"></div> 
+
+
+<div class="nav-buttons">
+  <button id="prev-btn">이전</button>
+  <button id="next-btn">다음</button>
+</div>
+
+</body>
+
+  <script>
+    const questions = [
+    "최근 2주 동안, 병원 생활 중 잠들기 어렵다고 느낀 적이 어느 정도 있었습니까?",
+    "입원 중 잠을 유지하기 어렵거나 자주 깨는 일이 얼마나 잦았습니까?",
+    "병동에서 새벽에 너무 일찍 잠에서 깼다고 느낀 적이 얼마나 있었습니까?",
+    "현재 병원에서의 수면 패턴에 어느 정도 만족하십니까?",
+    "당신의 수면 문제로 인해 병동에서 다른 사람들이 보기에도 기운이 없거나 힘들어 보인다고 생각하십니까?",
+    "현재 자신의 수면 문제(불면)에 대해 얼마나 걱정하고 계십니까?",
+    "수면 문제로 인해 입원 중의 생활(예: 낮 시간의 피로, 집중력, 기분, 병동활동 참여 등)에 어느 정도 방해를 받고 있다고 느끼십니까?"
+]
+
+    let answers = new Array(questions.length).fill(null);
+    let currentQuestion = 0;
+
+    function getScaleText(i) {
+      const map = {
+        0: "전혀 없음",
+        1: "약간 있음",
+        2: "중간",
+        3: "심함",
+        4: "매우 심함"
+      };
+      return map[i];
+    }
+
+    function postAndRedirect(score, endpoint) {
+      fetch('/submit_sum', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ test3_sum: score })
+      })
+      .then(response => {
+        if (response.ok) {
+          window.location.href = endpoint;
+        } else {
+          alert("서버 전송 중 오류가 발생했습니다.");
+        }
+      });
+    }
+
+
+    function generateQuestionHTML(text, index, selectedValue) {
+      let radios = '';
+      for (let i = 0; i <= 4; i++) {
+        const checked = (selectedValue == i) ? 'checked' : '';
+        radios += `
+          <label>
+            <input type="radio" name="q${index}" value="${i}" ${checked}>
+            <div class="scale-wrapper">
+              <div class="scale-number">${i}</div>
+              <div class="scale-text">${getScaleText(i)}</div>
+            </div>
+          </label>
+        `;
+      }
+
+      return `
+        <div class="question-box">
+          <div class="question-title">문항 ${index + 1} / ${questions.length}</div>
+          <div class="question-text">${text}</div>
+          <div class="rating">${radios}</div>
+        </div>
+      `;
+    }
+
+    function renderQuestion(index) {
+      const q = questions[index];
+      const saved = answers[index];
+      $('#question-container').html(generateQuestionHTML(q, index, saved));
+    }
+
+    $(document).on('click', '#next-btn', () => {
+    const val = $(`input[name=q${currentQuestion}]:checked`).val();
+
+    if (val === undefined) {
+        alert("설문을 완료해주세요!");
+        return; // 체크 안 했으면 진행 막기
+    }
+
+    answers[currentQuestion] = parseInt(val);
+
+    // 누적 점수 계산
+    const totalScore = answers.reduce((sum, v) => sum + (v || 0), 0);
+
+    // 조건 1: 2번째 문항까지 응답했는지 확인 후 누적합이 0인지 검사
+    if (currentQuestion === 1) {
+        const sum2 = answers.slice(0, 2).reduce((a, b) => a + (b || 0), 0);
+        if (sum2 === 0) {
+          postAndRedirect(sum2, "{{ url_for('test4') }}");
+          return;
+        }
+    }
+
+    // 조건 2: 4번째 문항까지 응답했는지 확인 후 누적합이 3 이하인지 검사
+    if (currentQuestion === 3) {
+        const sum4 = answers.slice(0, 4).reduce((a, b) => a + (b || 0), 0);
+      if (sum4 <= 3) {
+        postAndRedirect(sum5, "{{ url_for('test4') }}");
+        return;
+        }
+    }
+
+    if (currentQuestion < questions.length - 1) {
+        currentQuestion++;
+        renderQuestion(currentQuestion);
+    } else {
+        postAndRedirect(totalScore, "{{ url_for('test4') }}");
+    }
+    });
+
+
+    $(document).on('click', '#prev-btn', () => {
+    if (currentQuestion > 0) {
+        currentQuestion--;
+        renderQuestion(currentQuestion);
+    }
+    });
+
+
+    // 초기 문항 표시
+    renderQuestion(currentQuestion);
+  </script>
+
+
+</html>

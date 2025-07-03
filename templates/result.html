@@ -2,6 +2,8 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>추천 결과</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -81,39 +83,23 @@
 </head>
 <body>
 
-  <div class="recommend-box">
-    <h2>당신에게 추천하는 향은</h2>
+<h2>증상별 상대적 심각도 (정규화 비율)</h2>
+<canvas id="scoreChart" width="400" height="400"></canvas>
+
+  <!-- <div class="recommend-box">
+    <h2>당신에게 추천하는 향은</h2> -->
 
     <!-- 항상 보이는 추천 향 정보 -->
-    <div class="description">
+    <!-- <div class="description">
       <p><strong>오일 이름:</strong> </p>
-      <p><strong>제조법:</strong> </p>
+      <p><strong>개선증상 이름:</strong> </p>
       <p><strong>향 특징:</strong> </p>
     </div>
 
     <hr style="margin: 30px 0;">
 
-    <h3>다른 향을 찾고 있다면...</h3>
-    <h4>세부 정보를 확인하기 위해 오일 이름을 클릭하세요</h4>
-
-    <!-- 예시: 다른 오일들 -->
-    <div class="oil-item">
-    <button class="oil-button" onclick="toggleDesc('alt1')">페퍼민트 오일</button>
-    <div id="alt1" class="description hidden">
-      <p><strong>제조법:</strong> 페퍼민트 1방울 + 호호바</p>
-      <p><strong>향 특징:</strong> 청량하고 시원한 향</p>
-    </div>
-    </div>
-
-    <div class="oil-item">
-    <button class="oil-button" onclick="toggleDesc('alt2')">일랑일랑 오일</button>
-    <div id="alt2" class="description hidden">
-      <p><strong>제조법:</strong> 일랑일랑 2방울</p>
-      <p><strong>향 특징:</strong> 달콤하고 이국적인 향</p>
-    </div>
-  </div>
-  </div>
-
+    <h3>다른 향을 찾고 있다면...</h3> -->
+    <h4>증상과 관련된 다양한 에센셜오일을 찾기 위해 그래프를 클릭하세요!</h4>
 
   <!-- 돌아가기 버튼 -->
   <a class="back-button" href="{{ url_for('home') }}"><i class="fas fa-arrow-left"></i> 돌아가기</a>
@@ -123,6 +109,158 @@
       const el = document.getElementById(id);
       el.classList.toggle("hidden");
     }
+
+  const rawScores = {{ result | tojson | safe }};
+  const maxScores = {
+    "우울": 27,
+    "불안": 21,
+    "불면": 28,
+    "통증": 10,
+    "PTSD": 5
+  };
+
+  const thresholds = {
+    "우울": 5,
+    "불안": 5,
+    "불면": 8,
+    "통증": 1,
+    "PTSD": 2
+  };
+
+
+  // 범주 지정 함수 (label, raw score 기준)
+  function getCategory(label, score) {
+    if (label === '우울') {
+      if (score <= 4) return '정상';
+      if (score <= 9) return '경증 수준';
+      if (score <= 19) return '중등도 수준';
+      return '중증 수준';
+    } else if (label === '불안') {
+      if (score <= 4) return '정상';
+      if (score <= 9) return '경증 수준';
+      if (score <= 14) return '중등도 수준';
+      return '중증 수준';
+    } else if (label === '불면') {
+      if (score <= 7) return '정상';
+      if (score <= 14) return '경미한 수준';
+      if (score <= 21) return '중한 수준';
+      return '심각한 수준';
+    } else if (label === '통증') {
+      if (score === 0) return '없음';
+      if (score <= 3) return '경미한 수준';
+      if (score <= 6) return '중등도 수준';
+      return '심한 수준';
+    } else if (label === 'PTSD') {
+      if (score <= 1) return '없음';
+      if (score === 2) return '주의요망';
+      return '심한 수준';
+    }
+    return '';
+  }
+
+  // 색상 매핑
+  function getColor(category) {
+    const colorMap = {
+      '정상': '#d3d3d3',
+      '없음': '#d3d3d3',
+
+      '경증 수준': '#f9c74f',
+      '경미한 수준': '#f9c74f',
+
+      '중등도 수준': '#f9844a',
+      '중한 수준': '#f9844a',
+
+      '중증 수준': '#f94144',
+      '심각한 수준': '#f94144',
+      '심한 수준': '#f94144',
+
+      '주의요망': '#43aa8b'
+    };
+    return colorMap[category] || '#cccccc';
+  }
+
+  // 점수 정리 + 필터링 + 정규화 + 정렬
+  const processed = Object.entries(rawScores)
+    .filter(([label, score]) => score >= thresholds[label])
+    .map(([label, score]) => {
+      const category = getCategory(label, score);  // ✅ 먼저 범주 구하기
+      return {
+        originalLabel: label,  // 툴팁용
+        label: `${label} (${category}): ${score} / ${maxScores[label]}`,  // ✅ 라벨을 표시용으로 완성
+        raw: score,
+        normalized: +(score / maxScores[label]).toFixed(2),
+        category: category,
+        color: getColor(category)  // ✅ 이 시점엔 category가 정의됨
+      };
+    })
+    .sort((a, b) => b.normalized - a.normalized);
+
+  const ctx = document.getElementById('scoreChart').getContext('2d');
+  const chart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: processed.map(x => `${x.label} (${x.category})`),
+      datasets: [{
+        data: processed.map(x => x.normalized),
+        backgroundColor: processed.map(x => x.color),
+        borderWidth: 1
+      }]
+    },
+
+    options: {
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            font: {
+              size: 14
+            }
+          }
+        },
+        tooltip: {
+          enabled: true,
+          callbacks: {
+            title: function(context) {
+              const item = processed[context[0].dataIndex];
+              return item.originalLabel;  // 툴팁 상단 제목 줄 → 예: "우울"
+            },
+            label: function(context) {
+              const item = processed[context.dataIndex];
+              return `${item.originalLabel}: ${item.raw}점`;  // 아래 줄
+            }
+          }
+        },
+        datalabels: {
+          color: '#000',
+          font: {
+            weight: 'bold',
+            size: 12
+          },
+          anchor: 'end',
+          align: 'start',
+          offset: 10
+        }
+      },
+        onClick: function(event, elements) {
+          if (elements.length > 0) {
+            const index = elements[0].index;
+            const item = processed[index];
+            const key = item.originalLabel;
+            const routes = {
+              '우울': '/detail/depression.html',
+              '불안': '/detail/anxiety.html',
+              '불면': '/detail/insomnia.html',
+              'PTSD': '/detail/ptsd.html',
+              '통증': '/detail/pain.html'
+            };
+            const url = routes[key];
+            if (url) {
+              window.location.href = url;
+            }
+          }
+        }
+      }
+  });
   </script>
 </body>
 </html>
