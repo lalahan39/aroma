@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ symptom }} 관련 향기 추천</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang&family=Nanum+Brush+Script&family=Noto+Serif+KR&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    body {
+      font-family: 'Gowun Batang', serif;
+      background-color: #ffffff;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    .top-bar {
+      width: 100%;
+      display: flex;
+      justify-content: flex-end;
+      padding: 20px 30px 0 0;
+      box-sizing: border-box;
+    }
+
+    .home-button a {
+      background-color: #9c7d47;
+      color: white;
+      padding: 8px 18px;
+      text-decoration: none;
+      border-radius: 8px;
+      font-family: 'Gowun Batang', serif;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+      transition: background-color 0.2s ease;
+    }
+
+    .home-button a:hover {
+      background-color: #7a6135;
+    }
+
+    h1 {
+      margin-top: 80px;
+      font-size: 2em;
+    }
+
+    .card-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      padding: 30px;
+      max-width: 1100px;
+    }
+
+    .oil-card {
+      border: 2px solid #9c7d47;
+      border-radius: 12px;
+      width: 260px;
+      box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    .oil-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .oil-name {
+      font-weight: bold;
+      font-size: 1.2em;
+      margin: 10px 0 5px;
+    }
+
+    .scent {
+      font-size: 0.95em;
+      color: #333;
+      padding-bottom: 10px;
+    }
+
+  </style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="home-button">
+    <a href="{{ url_for('home') }}"><i class="fas fa-home"></i></a>
+  </div>
+</div>
+
+  <h1>{{ symptom }} 관련 추천 향기</h1>
+
+  <div class="card-container">
+    {% for oil in oils %}
+      <div class="oil-card">
+        <img src="{{ url_for('static', filename=oil.id + '.png') }}" alt="{{ oil.name }}">
+        <div class="oil-name">{{ oil.name }}</div>
+        <div class="scent">{{ oil.scent }}</div>
+      </div>
+    {% endfor %}
+  </div>
+
+</body>
+</html>

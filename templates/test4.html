@@ -22,10 +22,12 @@
       justify-content: center;
     }
 
-    .home-button {
-    position: absolute;
-    top: 20px;
-    right: 30px;
+    .top-bar {
+      width: 100%;
+      display: flex;
+      justify-content: flex-end;
+      padding: 20px 30px 0 0;
+      box-sizing: border-box;
     }
 
     .home-button a {
@@ -55,10 +57,19 @@
     }
 
     .question-title {
-      font-size: 1.3em;
+      margin-bottom: 5px;
       font-weight: bold;
-      margin-bottom: 10px;
     }
+
+    .main-title {
+      font-size: 1.4em;
+    }
+
+    .sub-title {
+      font-size: 1.1em;
+      color: #666; /* 약간 옅은 색으로 */
+    }
+
 
     .question-text {
       font-size: 1.5em;
@@ -67,12 +78,13 @@
     }
 
     .rating label {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-size: 1em;
-    margin: 0 6px;
+      display: flex;
+      flex-direction: row; /* 숫자 + 버튼을 한 줄로 */
+      align-items: center;
+      font-size: 1em;
+      gap: 10px;
     }
+
 
     .scale-number {
     font-size: 1.3em;
@@ -97,9 +109,10 @@
     }
 
     .rating {
-    display: flex;
-    justify-content: center;
-    gap: 12px; 
+      display: flex;
+      flex-direction: column;  /* 열로 정렬 */
+      align-items: center; /* 왼쪽 정렬 */
+      gap: 8px;
     }
 
     .nav-buttons {
@@ -131,8 +144,10 @@
 </head>
 <body>
 
-<div class="home-button">
-  <a href="{{ url_for('home') }}"><i class="fas fa-home"></i></a>
+<div class="top-bar">
+  <div class="home-button">
+    <a href="{{ url_for('home') }}"><i class="fas fa-home"></i></a>
+  </div>
 </div>
 
 <div>
@@ -215,7 +230,8 @@
 
       return `
         <div class="question-box">
-          <div class="question-title">문항 ${index + 1} / ${questions.length}</div>
+          <div class="question-title main-title">통증 정도 확인 (4/5)</div>
+          <div class="question-title sub-title">문항 ${index + 1} / ${questions.length}</div>
           <div class="question-text">${text}</div>
           <div class="rating">${radios}</div>
         </div>

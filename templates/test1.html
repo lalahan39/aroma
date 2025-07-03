@@ -22,10 +22,12 @@
       justify-content: center;
     }
 
-    .home-button {
-    position: absolute;
-    top: 20px;
-    right: 30px;
+    .top-bar {
+      width: 100%;
+      display: flex;
+      justify-content: flex-end;
+      padding: 20px 30px 0 0;
+      box-sizing: border-box;
     }
 
     .home-button a {
@@ -55,10 +57,19 @@
     }
 
     .question-title {
-      font-size: 1.3em;
+      margin-bottom: 5px;
       font-weight: bold;
-      margin-bottom: 10px;
     }
+
+    .main-title {
+      font-size: 1.4em;
+    }
+
+    .sub-title {
+      font-size: 1.1em;
+      color: #666; /* 약간 옅은 색으로 */
+    }
+
 
     .question-text {
       font-size: 1.5em;
@@ -130,8 +141,14 @@
 </head>
 <body>
 
-<div class="home-button">
-  <a href="{{ url_for('home') }}"><i class="fas fa-home"></i></a>
+<div class="top-bar">
+  <div class="home-button">
+    <a href="{{ url_for('home') }}"><i class="fas fa-home"></i></a>
+  </div>
+</div>
+
+<div style="max-width: 90%; margin-top: 40px; font-size: 1.1em; font-weight: bold; line-height: 1.5;">
+최근 2주 동안 다음과 같은 증상을 얼마나 자주 경험하셨습니까?
 </div>
 
 <div id="question-container"></div> 
@@ -205,7 +222,8 @@
 
       return `
         <div class="question-box">
-          <div class="question-title">문항 ${index + 1} / ${questions.length}</div>
+          <div class="question-title main-title">우울 증상 확인 (1/5)</div>
+          <div class="question-title sub-title">문항 ${index + 1} / ${questions.length}</div>
           <div class="question-text">${text}</div>
           <div class="rating">${radios}</div>
         </div>

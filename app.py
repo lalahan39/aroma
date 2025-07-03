@@ -33,11 +33,6 @@ def test5():
 def info():
     return render_template('info.html')
 
-@app.route('/<symptom>')
-def show_oils(symptom):
-    oils = oil_data_by_symptom.get(symptom, [])
-    return render_template('oils.html', symptom=symptom, oils=oils)
-
 @app.route('/result')
 def result():
     result_data = {
@@ -49,35 +44,35 @@ def result():
     }
     return render_template('result.html', result=result_data)
 
-@app.route("/detail/depression.html")
+@app.route("/depression.html")
 def depression_detail_depression():
     symptom = "우울"
     oils = oil_data_by_symptom.get(symptom, [])
-    return render_template("detail/depression.html", symptom=symptom, oils=oils)
+    return render_template("depression.html", symptom=symptom, oils=oils)
 
-@app.route("/detail/anxiety.html")
+@app.route("/anxiety.html")
 def depression_detail_anxiety():
     symptom = "불안"
     oils = oil_data_by_symptom.get(symptom, [])
-    return render_template("detail/anxiety.html", symptom=symptom, oils=oils)
+    return render_template("anxiety.html", symptom=symptom, oils=oils)
 
-@app.route("/detail/insomnia.html")
+@app.route("/insomnia.html")
 def depression_detail_insomnia():
     symptom = "불면증"
     oils = oil_data_by_symptom.get(symptom, [])
-    return render_template("detail/insomnia.html", symptom=symptom, oils=oils)
+    return render_template("insomnia.html", symptom=symptom, oils=oils)
 
-@app.route("/detail/pain.html")
+@app.route("/pain.html")
 def depression_detail_pain():
     symptom = "통증"
     oils = oil_data_by_symptom.get(symptom, [])
-    return render_template("detail/pain.html", symptom=symptom, oils=oils)
+    return render_template("pain.html", symptom=symptom, oils=oils)
 
-@app.route("/detail/PTSD.html")
+@app.route("/PTSD.html")
 def depression_detail_PTSD():
     symptom = "PTSD"
     oils = oil_data_by_symptom.get(symptom, [])
-    return render_template("detail/PTSD.html", symptom=symptom, oils=oils)
+    return render_template("PTSD.html", symptom=symptom, oils=oils)
 
 
 @app.route('/submit_sum', methods=['POST'])

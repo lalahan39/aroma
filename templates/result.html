@@ -79,9 +79,113 @@
     margin-bottom: 20px;
     }
 
+    .help-button {
+      position: absolute;
+      top: 20px;
+      left: 30px;
+      font-size: 24px;
+      color: #666;
+      cursor: pointer;
+      z-index: 100; /* 다른 요소와 겹치지 않게 */
+      transition: color 0.3s;
+    }
+
+    .help-button:hover {
+      color: #000;
+    }
+
+    /* 모달 배경 */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      padding-top: 80px;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+    }
+
+    /* 모달 내용 */
+    .modal-content {
+      background-color: #fff;
+      margin: auto;
+      padding: 30px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 600px;
+      border-radius: 12px;
+      font-family: 'Gowun Batang', serif;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    /* 닫기 버튼 */
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+    .close:hover {
+      color: black;
+      cursor: pointer;
+    }
+
+    /* 본문 */
+    .modal-body p {
+      text-align: left;
+      margin-bottom: 20px;
+      line-height: 1.6;
+      font-size: 1.05em;
+    }
+
+
   </style>
 </head>
 <body>
+
+<div class="help-button" onclick="openModal()">
+  <i class="fas fa-question-circle"></i>
+</div>
+
+<div id="helpModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h2>📋 점수 해석 안내</h2>
+    <div class="modal-body">
+      <p><strong>🟡 test1: 우울증 건강설문-9 (PHQ-9)</strong><br>
+      0~4 : 우울 없음<br>
+      5~9 : 가벼운 우울<br>
+      10~19 : 중간정도의 우울<br>
+      20~27 : 심한 우울</p>
+
+      <p><strong>🟡 test2: 일반화된 불안장애 척도-7 (GAD-7)</strong><br>
+      0~4 : 정상 또는 경미한 불안<br>
+      5~9 : 경도 불안<br>
+      10~14 : 중등도 불안<br>
+      15~21 : 중증 불안</p>
+
+      <p><strong>🟡 test3: 한국판 불면증 심각도 척도 (ISI-K)</strong><br>
+      0~7 : 불면증 아님<br>
+      8~14 : 경미한 수준<br>
+      15~21 : 중한 수준<br>
+      22~28 : 심각한 수준</p>
+
+      <p><strong>🟡 test4: 통증 수치 평가척도 (NRS)</strong><br>
+      0 : 통증 없음<br>
+      1~3 : 경미한 통증<br>
+      4~6 : 중등도 통증<br>
+      7~10 : 심한 통증</p>
+
+      <p><strong>🟡 test5: PTSD 선별도구 (K-PC-PTSD-5)</strong><br>
+      0~1 : 없음<br>
+      2 : 주의 요망<br>
+      3~5 : 심한 수준</p>
+    </div>
+  </div>
+</div>
 
 <h2>증상별 상대적 심각도 (정규화 비율)</h2>
 <canvas id="scoreChart" width="400" height="400"></canvas>
@@ -105,6 +209,21 @@
   <a class="back-button" href="{{ url_for('home') }}"><i class="fas fa-arrow-left"></i> 돌아가기</a>
 
   <script>
+
+  function openModal() {
+    document.getElementById("helpModal").style.display = "block";
+  }
+  function closeModal() {
+    document.getElementById("helpModal").style.display = "none";
+  }
+  // 바깥 영역 클릭 시 닫기
+  window.onclick = function(event) {
+    const modal = document.getElementById("helpModal");
+    if (event.target === modal) {
+      modal.style.display = "none";
+    }
+  }
+
     function toggleDesc(id) {
       const el = document.getElementById(id);
       el.classList.toggle("hidden");
@@ -247,11 +366,11 @@
             const item = processed[index];
             const key = item.originalLabel;
             const routes = {
-              '우울': '/detail/depression.html',
-              '불안': '/detail/anxiety.html',
-              '불면': '/detail/insomnia.html',
-              'PTSD': '/detail/ptsd.html',
-              '통증': '/detail/pain.html'
+              '우울': '/depression.html',
+              '불안': '/anxiety.html',
+              '불면': '/insomnia.html',
+              'PTSD': '/PTSD.html',
+              '통증': '/pain.html'
             };
             const url = routes[key];
             if (url) {
