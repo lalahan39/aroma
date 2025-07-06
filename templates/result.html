@@ -231,16 +231,16 @@
 
   const rawScores = {{ result | tojson | safe }};
   const maxScores = {
-    "우울": 27,
-    "불안": 21,
+    "우울": 1,
+    "불안": 1,
     "불면": 28,
     "통증": 10,
     "PTSD": 5
   };
 
   const thresholds = {
-    "우울": 5,
-    "불안": 5,
+    "우울": 0.2,
+    "불안": 0.2,
     "불면": 8,
     "통증": 1,
     "PTSD": 2
@@ -250,14 +250,14 @@
   // 범주 지정 함수 (label, raw score 기준)
   function getCategory(label, score) {
     if (label === '우울') {
-      if (score <= 4) return '정상';
-      if (score <= 9) return '경증 수준';
-      if (score <= 19) return '중등도 수준';
+      if (score <= 0.2) return '정상';
+      if (score <= 0.4) return '경증 수준';
+      if (score <= 0.6) return '중등도 수준';
       return '중증 수준';
     } else if (label === '불안') {
-      if (score <= 4) return '정상';
-      if (score <= 9) return '경증 수준';
-      if (score <= 14) return '중등도 수준';
+      if (score <= 0.2) return '정상';
+      if (score <= 0.4) return '경증 수준';
+      if (score <= 0.6) return '중등도 수준';
       return '중증 수준';
     } else if (label === '불면') {
       if (score <= 7) return '정상';

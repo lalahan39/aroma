@@ -78,13 +78,12 @@
     }
 
     .rating label {
-      display: flex;
-      flex-direction: row; /* 숫자 + 버튼을 한 줄로 */
-      align-items: center;
-      font-size: 1em;
-      gap: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 1em;
+    margin: 0 6px;
     }
-
 
     .scale-number {
     font-size: 1.3em;
@@ -98,7 +97,6 @@
     text-align: center;
     line-height: 1.2;
     margin-top: 2px;
-    white-space: pre-line;  /* ✅ 줄바꿈 처리 */
     }
 
 
@@ -109,10 +107,9 @@
     }
 
     .rating {
-      display: flex;
-      flex-direction: column;  /* 열로 정렬 */
-      align-items: center; /* 왼쪽 정렬 */
-      gap: 8px;
+    display: flex;
+    justify-content: center;
+    gap: 12px; 
     }
 
     .nav-buttons {
@@ -150,16 +147,6 @@
   </div>
 </div>
 
-<div>
-</div>
-
-<div style="max-width: 90%; margin-top: 40px; font-size: 1.1em; font-weight: bold; line-height: 1.5;">
-평소 병실에서 느끼는 통증, 검사 전후 또는 자세를 바꿀 때 느끼는 통증 등을 포함해서 생각해 주세요.
-</div>
-<div style="max-width: 90%; margin-top: 40px; font-size: 1.1em; font-weight: bold; line-height: 1.5;">
-0은 전혀 아프지 않은 상태, 10은 참을 수 없을 만큼 심한 통증을 의미합니다.
-</div>
-
 <div id="question-container"></div> 
 
 
@@ -172,7 +159,13 @@
 
   <script>
     const questions = [
-    "현재 느끼는 통증의 정도를 0부터 10까지 숫자로 표시해 주세요."
+    "초조하거나 불안하거나 조마조마하게 느낀다.",
+    "걱정하는 것을 멈추거나 조절할 수가 없다.",
+    "여러 가지 것들에 대해 걱정을 너무 많이 한다.",
+    "편하게 있기가 어렵다.",
+    "너무 안절부절못해서 가만히 있기가 힘들다.",
+    "쉽게 짜증이 나거나 쉽게 성을 내게 된다.",
+    "마치 끔찍한 일이 생길 것처럼 두렵게 느껴진다."
 ]
 
     let answers = new Array(questions.length).fill(null);
@@ -180,17 +173,10 @@
 
     function getScaleText(i) {
       const map = {
-        0: "",
-        1: "",
-        2: "",
-        3: "",
-        4: "",
-        5: "",
-        6: "",
-        7: "",
-        8: "",
-        9: "",
-        10: ""
+        0: "전혀 방해 받지 않았다",
+        1: "며칠 동안 방해 받았다",
+        2: "며칠 동안 자주 방해 받았다",
+        3: "거의 매일 방해 받았다"
       };
       return map[i];
     }
@@ -201,7 +187,7 @@
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ test4_sum: score })
+        body: JSON.stringify({ test2_sum: score })
       })
       .then(response => {
         if (response.ok) {
@@ -215,7 +201,7 @@
 
     function generateQuestionHTML(text, index, selectedValue) {
       let radios = '';
-      for (let i = 0; i <= 10; i++) {
+      for (let i = 0; i <= 3; i++) {
         const checked = (selectedValue == i) ? 'checked' : '';
         radios += `
           <label>
@@ -230,7 +216,7 @@
 
       return `
         <div class="question-box">
-          <div class="question-title main-title">통증 정도 확인 (3/3)</div>
+          <div class="question-title main-title">불안 증상 확인 (2/5)</div>
           <div class="question-title sub-title">문항 ${index + 1} / ${questions.length}</div>
           <div class="question-text">${text}</div>
           <div class="rating">${radios}</div>
@@ -257,11 +243,29 @@
     // 누적 점수 계산
     const totalScore = answers.reduce((sum, v) => sum + (v || 0), 0);
 
+    // 조건 1: 2번째 문항까지 응답했는지 확인 후 누적합이 0인지 검사
+    if (currentQuestion === 1) {
+        const sum2 = answers.slice(0, 2).reduce((a, b) => a + (b || 0), 0);
+        if (sum2 === 0) {
+          postAndRedirect(sum2, "{{ url_for('test3') }}");
+          return;
+        }
+    }
+
+    // 조건 2: 4번째 문항까지 응답했는지 확인 후 누적합이 2 이하인지 검사
+    if (currentQuestion === 3) {
+        const sum4 = answers.slice(0, 4).reduce((a, b) => a + (b || 0), 0);
+      if (sum4 <= 2) {
+        postAndRedirect(4, "{{ url_for('test3') }}");
+        return;
+        }
+    }
+
     if (currentQuestion < questions.length - 1) {
         currentQuestion++;
         renderQuestion(currentQuestion);
     } else {
-        postAndRedirect(totalScore, "{{ url_for('result') }}");
+        postAndRedirect(totalScore, "{{ url_for('test3') }}");
     }
     });
 

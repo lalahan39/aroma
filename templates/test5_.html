@@ -70,7 +70,6 @@
       color: #666; /* 약간 옅은 색으로 */
     }
 
-
     .question-text {
       font-size: 1.5em;
       font-weight: bold;
@@ -78,13 +77,12 @@
     }
 
     .rating label {
-      display: flex;
-      flex-direction: row; /* 숫자 + 버튼을 한 줄로 */
-      align-items: center;
-      font-size: 1em;
-      gap: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 1em;
+    margin: 0 6px;
     }
-
 
     .scale-number {
     font-size: 1.3em;
@@ -98,7 +96,6 @@
     text-align: center;
     line-height: 1.2;
     margin-top: 2px;
-    white-space: pre-line;  /* ✅ 줄바꿈 처리 */
     }
 
 
@@ -109,10 +106,9 @@
     }
 
     .rating {
-      display: flex;
-      flex-direction: column;  /* 열로 정렬 */
-      align-items: center; /* 왼쪽 정렬 */
-      gap: 8px;
+    display: flex;
+    justify-content: center;
+    gap: 12px; 
     }
 
     .nav-buttons {
@@ -150,14 +146,9 @@
   </div>
 </div>
 
-<div>
-</div>
-
-<div style="max-width: 90%; margin-top: 40px; font-size: 1.1em; font-weight: bold; line-height: 1.5;">
-평소 병실에서 느끼는 통증, 검사 전후 또는 자세를 바꿀 때 느끼는 통증 등을 포함해서 생각해 주세요.
-</div>
-<div style="max-width: 90%; margin-top: 40px; font-size: 1.1em; font-weight: bold; line-height: 1.5;">
-0은 전혀 아프지 않은 상태, 10은 참을 수 없을 만큼 심한 통증을 의미합니다.
+<div id="ptsd-instruction" style="max-width: 90%; margin-top: 40px; font-size: 1.1em; font-weight: bold; line-height: 1.5;">
+  살면서 겪었던 두려운 경험, 끔찍했던 일, 혹은 감정적으로 힘들었던 일이 있다면, 그로 인해 최근 한 달 동안 다음과 같은 경험을 한 적이 있습니까?<br>
+  <span style="font-size: 0.9em; font-weight: normal;">※ 최근 입원 중 겪은 사건도 포함해 생각해 주세요.</span>
 </div>
 
 <div id="question-container"></div> 
@@ -172,7 +163,11 @@
 
   <script>
     const questions = [
-    "현재 느끼는 통증의 정도를 0부터 10까지 숫자로 표시해 주세요."
+    "그 경험에 관한 악몽을 꾸었거나, 생각하고 싶지 않아도 자꾸 떠오른 적이 있었다.",
+    "그 경험을 생각하지 않으려고 하거나, 그 일을 떠올리게 하는 상황·장소·대화를 일부러 피하려고 한 적이 있었다.",
+    "병원 생활 중 주변을 과도하게 경계하거나, 작은 일에도 쉽게 놀랐던 적이 있었다.",
+    "사람들과의 관계, 일상 활동, 병동 내 생활 등이 예전보다 멀게 느껴지거나 감정이 무뎌진 것처럼 느낀 적이 있었다.",
+    "그 경험이나 그로 인해 생긴 문제에 대해 죄책감을 느끼거나, 자신이나 다른 사람을 원망하며 괴로워한 적이 있었다."
 ]
 
     let answers = new Array(questions.length).fill(null);
@@ -180,17 +175,8 @@
 
     function getScaleText(i) {
       const map = {
-        0: "",
-        1: "",
-        2: "",
-        3: "",
-        4: "",
-        5: "",
-        6: "",
-        7: "",
-        8: "",
-        9: "",
-        10: ""
+        0: "아니오",
+        1: "예"
       };
       return map[i];
     }
@@ -201,7 +187,7 @@
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ test4_sum: score })
+        body: JSON.stringify({ test5_sum: score })
       })
       .then(response => {
         if (response.ok) {
@@ -215,7 +201,7 @@
 
     function generateQuestionHTML(text, index, selectedValue) {
       let radios = '';
-      for (let i = 0; i <= 10; i++) {
+      for (let i = 0; i <= 1; i++) {
         const checked = (selectedValue == i) ? 'checked' : '';
         radios += `
           <label>
@@ -230,7 +216,7 @@
 
       return `
         <div class="question-box">
-          <div class="question-title main-title">통증 정도 확인 (3/3)</div>
+          <div class="question-title main-title">PTSD 관련 증상 확인 (5/5)</div>
           <div class="question-title sub-title">문항 ${index + 1} / ${questions.length}</div>
           <div class="question-text">${text}</div>
           <div class="rating">${radios}</div>
@@ -256,6 +242,15 @@
 
     // 누적 점수 계산
     const totalScore = answers.reduce((sum, v) => sum + (v || 0), 0);
+
+    // 조건 1: 3번째 문항까지 응답했는지 확인 후 누적합이 0인지 검사
+    if (currentQuestion === 2) {
+        const sum3 = answers.slice(0, 3).reduce((a, b) => a + (b || 0), 0);
+        if (sum3 === 0) {
+          postAndRedirect(sum3, "{{ url_for('result') }}");
+          return;
+        }
+    }
 
     if (currentQuestion < questions.length - 1) {
         currentQuestion++;

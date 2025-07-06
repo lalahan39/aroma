@@ -9,6 +9,10 @@ app.secret_key = 'your_secret_key'  # Render 배포 시 꼭 보안성 강화할 
 def home():
     return render_template('home.html')
 
+@app.route('/test12')
+def test12():
+    return render_template('test12.html')
+
 @app.route('/test1')
 def test1():
     return render_template('test1.html')
