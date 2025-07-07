@@ -230,23 +230,6 @@ const questions = [
       return map[i];
     }
 
-    function postAndRedirect(score, endpoint) {
-      fetch('/submit_sum', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ test3_sum: score })
-      })
-      .then(response => {
-        if (response.ok) {
-          window.location.href = endpoint;
-        } else {
-          alert("서버 전송 중 오류가 발생했습니다.");
-        }
-      });
-    }
-
 
     function generateQuestionHTML(text, index, selectedValue) {
       let radios = '';
@@ -300,7 +283,7 @@ const questions = [
         for (let i = 0; i < answers.length; i++) {
         const a = answers[i];
         if (a === null) continue;
-        const norm = a / 3;
+        const norm = a / 4;
         anxiety_score += questions[i].anxiety_weight * norm;
         depression_score += questions[i].depression_weight * norm;
         }

@@ -156,7 +156,7 @@
     <h2>📋 점수 해석 안내</h2>
     <div class="modal-body">
       <p><strong>🟡 test1: 우울증 건강설문-9 (PHQ-9)</strong><br>
-      0~4 : 우울 없음<br>
+      <!-- 0~4 : 우울 없음<br>
       5~9 : 가벼운 우울<br>
       10~19 : 중간정도의 우울<br>
       20~27 : 심한 우울</p>
@@ -165,7 +165,19 @@
       0~4 : 정상 또는 경미한 불안<br>
       5~9 : 경도 불안<br>
       10~14 : 중등도 불안<br>
-      15~21 : 중증 불안</p>
+      15~21 : 중증 불안</p> -->
+
+      <p><strong>🟡 test12: 불안 설문지</strong><br>
+      Anxiety Symptoms Questionnaire (ASQ)<br>
+      Beck Anxiety Inventory (BAI)<br>
+      Hamilton Anxiety Rating Scale (HAM-A)<br>
+      * 3가지 설문을 통합하여 사용</p>
+
+      <p><strong>🟡 test12: 우울 설문지</strong><br>
+      Hamilton Rating Scale for Depression (HRSD)<br>
+      Beck Depression Inventory, BDI<br>
+      DSM-5<br>
+      * 3가지 설문을 통합하여 사용</p>
 
       <p><strong>🟡 test3: 한국판 불면증 심각도 척도 (ISI-K)</strong><br>
       0~7 : 불면증 아님<br>
@@ -179,10 +191,10 @@
       4~6 : 중등도 통증<br>
       7~10 : 심한 통증</p>
 
-      <p><strong>🟡 test5: PTSD 선별도구 (K-PC-PTSD-5)</strong><br>
+      <!-- <p><strong>🟡 test5: PTSD 선별도구 (K-PC-PTSD-5)</strong><br>
       0~1 : 없음<br>
       2 : 주의 요망<br>
-      3~5 : 심한 수준</p>
+      3~5 : 심한 수준</p> -->
     </div>
   </div>
 </div>
@@ -239,8 +251,8 @@
   };
 
   const thresholds = {
-    "우울": 0.2,
-    "불안": 0.2,
+    "우울": 0.15,
+    "불안": 0.15,
     "불면": 8,
     "통증": 1,
     "PTSD": 2
@@ -250,14 +262,14 @@
   // 범주 지정 함수 (label, raw score 기준)
   function getCategory(label, score) {
     if (label === '우울') {
-      if (score <= 0.2) return '정상';
-      if (score <= 0.4) return '경증 수준';
-      if (score <= 0.6) return '중등도 수준';
+      if (score <= 0.15) return '정상';
+      if (score <= 0.3) return '경증 수준';
+      if (score <= 0.7) return '중등도 수준';
       return '중증 수준';
     } else if (label === '불안') {
-      if (score <= 0.2) return '정상';
-      if (score <= 0.4) return '경증 수준';
-      if (score <= 0.6) return '중등도 수준';
+      if (score <= 0.15) return '정상';
+      if (score <= 0.3) return '경증 수준';
+      if (score <= 0.7) return '중등도 수준';
       return '중증 수준';
     } else if (label === '불면') {
       if (score <= 7) return '정상';
