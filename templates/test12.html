@@ -200,18 +200,20 @@ const questions = [
     {"text": "나는 자주 머리가 조이는 듯한 두통을 느낀다.", "anxiety_weight": 1/105, "depression_weight": 0.0},
     {"text": "나는 자주 이유 없이 소름이 돋는다.", "anxiety_weight": 1/105, "depression_weight": 0.0},
     {"text": "나는 이유 없이 피로하거나, 무기력하다고 느낀다.", "anxiety_weight": 1/15, "depression_weight": 1/5},
-    {"text": "나는 나의 건강 염려가 지나치다고 생각한다.", "anxiety_weight": 1.0, "depression_weight": 1.0},
-    {"text": "나는 기분이 우울하거나 내가 무가치하다고 느낀다.", "anxiety_weight": 1.0, "depression_weight": 1.0},
-    {"text": "나는 나의 신체에 대한 부정적인 인식을 가지고 있다.", "anxiety_weight": 1.0, "depression_weight": 1.0},
-    {"text": "나는 높은 빈도로 피로와 무기력감을 느낀다.", "anxiety_weight": 0.0, "depression_weight": 1.0},
-    {"text": "나는 내가 병에 걸린 것이 내 탓이라고 생각한다.", "anxiety_weight": 0.0, "depression_weight": 1.0},
-    {"text": "나는 입원 후 잠들기 어렵거나 자주 깨거나 너무 일찍 깨어나는 일이 자주 있었다.", "anxiety_weight": 0.0, "depression_weight": 1.0},
-    {"text": "나는 질문에 대답하는 데 오랜 시간이 걸리거나, 지연을 경험한 적이 있다.", "anxiety_weight": 1.0, "depression_weight": 1.0},
-    {"text": "나는 자살에 대한 생각을 한다.", "anxiety_weight": 0.0, "depression_weight": 1.0},
-    {"text": "나는 손톱이나 머리를 뜯거나, 불안한 증세를 보인다.", "anxiety_weight": 1.0, "depression_weight": 1.0},
-    {"text": "나는 위장관계(식욕 저하, 복부 팽만감, 복부 중압감)에 이상을 느낀다.", "anxiety_weight": 1.0, "depression_weight": 0.0},
-    {"text": "나는 눈에 띄는 체중 변화를 겪었다. (관련 부작용이 있는 약물 복용 중일시, 0 표시)", "anxiety_weight": 1.0, "depression_weight": 1.0},
-    {"text": "나는 종종 흥미 저하나, 무기력감 때문에 일상생활에 어려움을 느낀다.", "anxiety_weight": 1.0, "depression_weight": 1.0},
+
+
+    {"text": "나는 나의 건강 염려가 지나치다고 생각한다.", "anxiety_weight": 1.0/16, "depression_weight": 1.0/22},
+    {"text": "나는 기분이 우울하거나 내가 무가치하다고 느낀다.", "anxiety_weight": 1.0/16, "depression_weight": 1.0/22},
+    {"text": "나는 나의 신체에 대한 부정적인 인식을 가지고 있다.", "anxiety_weight": 1.0/16, "depression_weight": 1.0/22},
+    {"text": "나는 높은 빈도로 피로와 무기력감을 느낀다.", "anxiety_weight": 0.0, "depression_weight": 1.0/22},
+    {"text": "나는 내가 병에 걸린 것이 내 탓이라고 생각한다.", "anxiety_weight": 0.0, "depression_weight": 1.0/22},
+    {"text": "나는 입원 후 잠들기 어렵거나 자주 깨거나 너무 일찍 깨어나는 일이 자주 있었다.", "anxiety_weight": 0.0, "depression_weight": 1.0/22},
+    {"text": "나는 질문에 대답하는 데 오랜 시간이 걸리거나, 지연을 경험한 적이 있다.", "anxiety_weight": 1.0, "depression_weight": 1.0/22},
+    {"text": "나는 자살에 대한 생각을 한다.", "anxiety_weight": 0.0, "depression_weight": 1.0/22},
+    {"text": "나는 손톱이나 머리를 뜯거나, 불안한 증세를 보인다.", "anxiety_weight": 1.0/16, "depression_weight": 1.0/22},
+    {"text": "나는 위장관계(식욕 저하, 복부 팽만감, 복부 중압감)에 이상을 느낀다.", "anxiety_weight": 1.0/16, "depression_weight": 0.0},
+    {"text": "나는 눈에 띄는 체중 변화를 겪었다. (관련 부작용이 있는 약물 복용 중일시, 0 표시)", "anxiety_weight": 1.0, "depression_weight": 1.0/22},
+    {"text": "나는 종종 흥미 저하나, 무기력감 때문에 일상생활에 어려움을 느낀다.", "anxiety_weight": 1.0/16, "depression_weight": 1.0/22},
 ]
 
     let answers = new Array(questions.length).fill(null);
@@ -302,6 +304,13 @@ const questions = [
         anxiety_score += questions[i].anxiety_weight * norm;
         depression_score += questions[i].depression_weight * norm;
         }
+
+        // 41번째 응답 완료 시 정규화 보정
+        if (answers.length >= 41) {
+            anxiety_score *= (0.5 / 0.979);
+            depression_score *= (0.5 / 0.979);
+        }
+
 
         anxiety_score = Math.round(anxiety_score * 1000) / 1000;
         depression_score = Math.round(depression_score * 1000) / 1000;

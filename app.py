@@ -44,7 +44,7 @@ def result():
         '불안': session.get('test2_sum', 0),
         '불면': session.get('test3_sum', 0),
         '통증': session.get('test4_sum', 0),
-        'PTSD': session.get('test5_sum', 0)
+        # 'PTSD': session.get('test5_sum', 0)
     }
     return render_template('result.html', result=result_data)
 
